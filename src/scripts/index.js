@@ -1,6 +1,6 @@
 import '../styles/index.css';
 import { initialCards } from "./cards.js";
-import { createCard, removeCard, likeCard } from './CardService.js';
+import { createCard, removeCard, likeCard } from './card.js';
 import { open, close } from './modal.js';
 import avatarImage from '../images/avatar.jpg';
 
@@ -32,48 +32,62 @@ const handleClickCard = (imageSrc, imageAlt) => {
   popupImage.src = imageSrc;
   popupImage.alt = imageAlt;
   popupCaption.textContent = imageAlt;
-}
+};
 
-addCardButton.addEventListener('click', () => {
-  open(popupTypeNewCard)
-})
+const handleOpenPopupTypeNewCard = () => {
+  open(popupTypeNewCard);
+};
 
-buttonEdit.addEventListener('click', () => {
-  open(popupTypeEdit)
+const handleOpenPopupEdit = () => {
+  open(popupTypeEdit);
   nameInput.value = profileName.textContent;
   descriptionInput.value = profileDescription.textContent;
-})
+};
 
-formElementEdit.addEventListener('submit', (evt) => {
+const handleEditFormSubmit = (evt) => {
   evt.preventDefault();
   profileName.textContent = nameInput.value;
-  profileDescription.textContent = descriptionInput.value
-  close(popupTypeEdit)
-})
+  profileDescription.textContent = descriptionInput.value;
+  close(popupTypeEdit);
+};
 
-formCardCreate.addEventListener('submit', (evt) => {
+const handleCardCreateFormSubmit = (evt) => {
   evt.preventDefault();
-  const newCard = createCard({
-    name: placeInput.value,
-    link: urlInput.value
-  }, removeCard, likeCard, handleClickCard)
-  list.prepend(newCard)
-  formCardCreate.reset()
-})
+  const newCard = createCard(
+    {
+      name: placeInput.value,
+      link: urlInput.value
+    },
+    removeCard,
+    likeCard,
+    handleClickCard
+  );
+  list.prepend(newCard);
+  formCardCreate.reset();
+  close(popupTypeNewCard);
+};
 
-document.addEventListener('DOMContentLoaded', () => {
-  profileAvatar.style.backgroundImage = `url(${avatarImage})`
+const init = () => {
+  profileAvatar.style.backgroundImage = `url(${avatarImage})`;
+  
+  popups.forEach(popup => popup.classList.add('popup_is-animated'));
+  
   initialCards.forEach(data => {
-    const card = createCard(data, removeCard, likeCard, handleClickCard)
-    list.append(card)
-  })
-  popups.forEach(popup => {
-    popup.classList.add('popup_is-animated')
-  })
+    const card = createCard(data, removeCard, likeCard, handleClickCard);
+    list.append(card);
+  });
+  
+  addCardButton.addEventListener('click', handleOpenPopupTypeNewCard);
+  buttonEdit.addEventListener('click', handleOpenPopupEdit);
+  formElementEdit.addEventListener('submit', handleEditFormSubmit);
+  formCardCreate.addEventListener('submit', handleCardCreateFormSubmit);
+  
   buttonsCloseModal.forEach(button => {
     button.addEventListener('click', () => {
-      const modal = document.querySelector('.popup_is-opened')
-      close(modal)
-    })
-  })
-})
+      const modal = document.querySelector('.popup_is-opened');
+      close(modal);
+    });
+  });
+};
+
+document.addEventListener('DOMContentLoaded', init)

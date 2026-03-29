@@ -1,6 +1,6 @@
 const createCard = (data, deleteCallback, likeCallback, handleClick) => {
   const template = document.querySelector('#card-template');
-  const newCardElement = template.content.cloneNode(true);
+  const newCardElement = template.content.querySelector('.card').cloneNode(true);
   const imageElement = newCardElement.querySelector('.card__image');
   const titleElement = newCardElement.querySelector('.card__title');
   const likeButton = newCardElement.querySelector('.card__like-button');
