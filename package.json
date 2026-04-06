@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "rm -rf dist && webpack",
+    "build": "webpack",
     "dev": "webpack serve --open",
     "deploy": "gh-pages -d dist"
   },
