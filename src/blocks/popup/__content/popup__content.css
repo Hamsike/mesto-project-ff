@@ -9,6 +9,17 @@
   padding: 34px 36px;
 }
 
+.delete__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 25%;
+}
+
+.delete__content p {
+  margin: 0;
+}
+
 @media screen and (max-width: 568px) {
   .popup__content {
     width: 100%;

@@ -5,3 +5,16 @@
   background: #fff;
   padding: 25px 20px;
 }
+
+.card__likes {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.card__likes p {
+  margin: 0;
+  color: black;
+}

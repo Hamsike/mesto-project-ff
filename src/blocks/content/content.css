@@ -1,4 +1,39 @@
 .content {
+  display: none;
   flex-shrink: 0;
   flex-grow: 1;
+  animation: fadeIn 0.5s ease;
+}
+.content__loading {
+  display: none;
+  justify-content: center;
+  align-items: center; 
+  width: 100%;
+  max-height: 100%;
+  min-height: 700px;
+  animation: fadeIn 0.5s ease;
+}
+
+.content__loading p {
+  color: #fff;
+}
+
+.content.active {
+  display: block;
+}
+
+.content__loading.active {
+  display: flex;
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
