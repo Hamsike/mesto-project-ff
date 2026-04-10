@@ -1,12 +1,3 @@
-export const validationSettings = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitbuttonElementSelector: '.popup__button',
-  inactivebuttonElementClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
-}
-
 function hideError(formElement, inputElement, config) {
   inputElement.classList.remove(config.inputErrorClass)
   const errorElement = formElement.querySelector(`#${inputElement.id}-error`)
@@ -63,7 +54,7 @@ function togglebuttonElementState(inputList, buttonElement, config) {
   buttonElement.disabled = isInvalid
 }
 
-export function clearValidation(formElement, config = validationSettings) {
+export function clearValidation(formElement, config) {
   const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
   const buttonElement = formElement.querySelector(config.submitbuttonElementSelector);
   
@@ -79,7 +70,7 @@ export function clearValidation(formElement, config = validationSettings) {
   })
 }
 
-export function enableValidation(config = validationSettings) {
+export function enableValidation(config) {
   const forms = Array.from(document.querySelectorAll(config.formSelector))
   forms.forEach(formElement => {
     const inputList = Array.from(formElement.querySelectorAll(config.inputSelector))

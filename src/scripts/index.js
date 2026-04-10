@@ -1,9 +1,10 @@
 import '../styles/index.css';
-import { createCard, removeCard, likeCard } from './card.js';
+import { createCard, likeCard } from './card.js';
 import { open, close } from './modal.js';
 import avatarImage from '../images/avatar.jpg';
 import { apiMestoEndpoints } from '../api/apiMesto.js';
-import { clearValidation, enableValidation, validationSettings } from './validation.js';
+import { clearValidation, enableValidation} from './validation.js';
+import { toggleButtonClass } from './utils.js';
 
 const list = document.querySelector('.places__list')
 const profileAvatar = document.querySelector('.profile__image')
@@ -41,26 +42,58 @@ const buttonSubmitCreate = formCardCreate.elements.button
 const popupDelete = document.querySelector('.popup_type_delete')
 const buttonDelete = popupDelete.querySelector('.popup__button')
 
-const handleOpenDeletePopup = (evt, cardId) => {
+const popupEditAvatar = document.querySelector('.popup_type_edit_avatar')
+const formEditAvatar = document.forms['edit-avatar']
+const inputUrlAvatar = formEditAvatar.elements.link
+const buttonSubmitAvatar = formEditAvatar.elements.button
+
+const validationSettings = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitbuttonElementSelector: '.popup__button',
+  inactivebuttonElementClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+}
+
+const handleSubmitAvatar = async (evt) => {
+  evt.preventDefault()
+  toggleButtonClass(buttonSubmitAvatar, true, 'Сохранение...', validationSettings)
+  const succes = await apiMestoEndpoints.updateAvatar(inputUrlAvatar.value)
+  if (succes) {
+    profileAvatar.style.backgroundImage = `url(${inputUrlAvatar.value})`
+    close(popupEditAvatar)
+  }
+  else {
+    console.log('Не удалось обновить аватар')
+  }
+  toggleButtonClass(buttonSubmitAvatar, false, 'Сохранить', validationSettings)
+}
+
+const handleOpenAvatarPopup = () => {
+  open(popupEditAvatar)
+  clearValidation(popupEditAvatar, validationSettings)
+}
+
+const handleOpenDeletePopup = (cardElement, cardId) => {
   open(popupDelete)
-  clearValidation(popupDelete)
-  const cardElement = evt.target.closest('.card')
+  clearValidation(popupDelete, validationSettings)
   configTarget.currentCardId = cardId
   configTarget.currentCardElement = cardElement
 }
 
-export const toggleButtonClass = (buttonElement, isDisabled, text) => {
-  if (isDisabled) {
-    buttonElement.disabled = true
-    buttonElement.textContent = text
+const removeCard = async (buttonElementDelete, popupDelete, configTarget) => {
+  toggleButtonClass(buttonElementDelete, true, 'Удаление...', validationSettings)
+  const success = await apiMestoEndpoints.deleteCard(configTarget.currentCardId)
+  if (success) {
+    configTarget.currentCardElement.remove()
+    close(popupDelete)
   }
   else {
-    buttonElement.disabled = false
-    buttonElement.textContent = text
+    console.log('Не удалось удалить')
   }
-  buttonElement.classList.toggle(validationSettings.submitbuttonElementSelector)
-  buttonElement.classList.toggle(validationSettings.inactivebuttonElementClass)
-}
+  toggleButtonClass(buttonElementDelete, false, 'Удалить', validationSettings)
+};
 
 const startLoadingContent = () => {
   loadingContent.classList.add('active')
@@ -81,40 +114,41 @@ const handleClickCard = (imageSrc, imageAlt) => {
 
 const handleOpenPopupTypeNewCard = () => {
   open(popupTypeNewCard);
-  clearValidation(popupTypeNewCard)
+  clearValidation(popupTypeNewCard, validationSettings)
 };
 
 const handleOpenPopupEdit = () => {
   open(popupTypeEdit);
   nameInput.value = profileName.textContent;
   descriptionInput.value = profileDescription.textContent;
-  clearValidation(popupTypeEdit)
+  clearValidation(popupTypeEdit, validationSettings)
 };
 
 const handleEditFormSubmit = async (evt) => {
   evt.preventDefault();
 
-  toggleButtonClass(buttonSumbitEdit, true, 'Сохранение...')
+  toggleButtonClass(buttonSumbitEdit, true, 'Сохранение...', validationSettings)
 
   const name = nameInput.value
   const description = descriptionInput.value
-  const succes = await apiMestoEndpoints.updateProfile(name, description)
-  if (succes) {
-    profileName.textContent = nameInput.value;
-    profileDescription.textContent = descriptionInput.value;
+  const response = await apiMestoEndpoints.updateProfile(name, description)
+  if (response.success) {
+    const data = response.data
+    profileName.textContent = data.name;
+    profileDescription.textContent = data.about;
     close(popupTypeEdit);
   }
   else {
     console.log('Ошибка')
   }
 
-  toggleButtonClass(buttonSumbitEdit, false, 'Сохранить')
+  toggleButtonClass(buttonSumbitEdit, false, 'Сохранить', validationSettings)
 };
 
 const handleCardCreateFormSubmit = async (evt) => {
   evt.preventDefault();
 
-  toggleButtonClass(buttonSubmitCreate, true, 'Сохранение...')
+  toggleButtonClass(buttonSubmitCreate, true, 'Сохранение...', validationSettings)
 
   const data = {
     name: placeInput.value,
@@ -137,14 +171,14 @@ const handleCardCreateFormSubmit = async (evt) => {
   else {
     console.log('Ошибка')
   }
-  toggleButtonClass(buttonSubmitCreate, false, 'Сохранить')
+  toggleButtonClass(buttonSubmitCreate, false, 'Сохранить', validationSettings)
 };
 
 const init = async () => {
   startLoadingContent()
   const [profile, cards] = await Promise.all([apiMestoEndpoints.getProfile(), apiMestoEndpoints.getCards()])
   endLoadingContent()
-  enableValidation()
+  enableValidation(validationSettings)
 
   profileAvatar.style.backgroundImage = `url(${avatarImage})`;
   profileName.textContent = profile.name
@@ -163,6 +197,8 @@ const init = async () => {
   formElementEdit.addEventListener('submit', handleEditFormSubmit);
   formCardCreate.addEventListener('submit', handleCardCreateFormSubmit);
   buttonDelete.addEventListener('click', () => removeCard(buttonDelete, popupDelete, configTarget))
+  profileAvatar.addEventListener('click', handleOpenAvatarPopup)
+  formEditAvatar.addEventListener('submit', handleSubmitAvatar)
 
   buttonsCloseModal.forEach(button => {
     button.addEventListener('click', () => {
@@ -172,4 +208,4 @@ const init = async () => {
   });
 };
 
-document.addEventListener('DOMContentLoaded', init)
+init()

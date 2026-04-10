@@ -1,5 +1,4 @@
 import axios from "axios";
-import { likeCard } from "../scripts/card";
 
 const apiMesto = axios.create({
   baseURL: 'https://nomoreparties.co/v1',
@@ -39,9 +38,9 @@ export const apiMestoEndpoints = {
     return response.data
   },
 
-   updateProfile: async (name, about) => {
+  updateProfile: async (name, about) => {
     const response = await apiMesto.patch('/higher-front-back-dev/users/me', { name, about });
-    return response.success;
+    return response.data;
   },
 
   addNewCard: async (name, link) => {
@@ -56,11 +55,18 @@ export const apiMestoEndpoints = {
 
   likeCard: async (cardId) => {
     const response = await apiMesto.put(`/higher-front-back-dev/cards/likes/${cardId}`)
-    return response.data
+    return {data: response.data, success: response.success}
   },
 
   unlikeCard: async (cardId) => {
     const response = await apiMesto.delete(`/higher-front-back-dev/cards/likes/${cardId}`)
     return response.data
+  },
+
+  updateAvatar: async (avatar) => {
+    const response = await apiMesto.patch('/higher-front-back-dev/users/me/avatar', {
+      avatar
+    })
+    return response.success
   }
 }

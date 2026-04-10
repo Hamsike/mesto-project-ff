@@ -112,14 +112,32 @@
       </div>
     </div>
 
-    <div class="popup popup_type_delete">
-      <div class="popup__content">
+    <div class="popup popup_type_delete dls">
+      <div class="popup__content dls">
         <button type="button" class="popup__close" aria-label="Закрыть окно"></button>
-        <h3 class="popup__title">Удаление карточки</h3>
-        <div class="delete__content">
-          <p>Вы уверены, что хотите удалить?</p>
-          <button type="submit" name="button" class="button popup__button">Удалить</button>
-        </div>
+        <h3 class="popup__title">Вы уверены, что хотите удалить?</h3>
+        <button type="submit" name="button" class="button popup__button delete__button">Удалить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup popup_type_edit_avatar">
+      <div class="popup__content dls">
+        <button type="button" class="popup__close" aria-label="Закрыть окно"></button>
+        <h3 class="popup__title">Обновить аватар</h3>
+        <form class="popup__form" name="edit-avatar">
+          <input
+            id="link-input"
+            type="url" 
+            name="link"
+            class="popup__input popup__input_type_url" 
+            pattern="^(https?:\/\/|ftp:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}([/?#][^\s]*)?$"
+            data-error-message="Ошибка: введите корректный URL (например, https://example.com/image.jpg или http://site.ru/pic.png)"
+            placeholder="Ссылка на картинку"
+            required>
+            <span id="link-input-error"></span>
+          <button type="submit" name="button" class="button popup__button">Сохранить</button>
+        </form>
       </div>
     </div>
   </div>

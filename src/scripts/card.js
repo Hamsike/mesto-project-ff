@@ -1,8 +1,6 @@
-import { toggleButtonClass } from ".";
 import { apiMestoEndpoints } from "../api/apiMesto";
-import { close } from "./modal";
 
-const createCard = (data, profileId, handleOpenDelete, likeCallback, handleClick,) => {
+const createCard = (data, profileId, handleOpenDelete, likeCallback, handleClick) => {
   const template = document.querySelector('#card-template');
   const newCardElement = template.content.querySelector('.card').cloneNode(true);
   const imageElement = newCardElement.querySelector('.card__image');
@@ -20,7 +18,7 @@ const createCard = (data, profileId, handleOpenDelete, likeCallback, handleClick
     deleteButton.style.display = 'none'
   }
   else {
-    deleteButton.addEventListener('click', (event) => handleOpenDelete(event, data._id))
+    deleteButton.addEventListener('click', (event) => handleOpenDelete(event.target.closest('.card'), data._id))
   }
  
   if (data.likes.find(curElement => curElement._id === profileId) !== undefined) {
@@ -31,19 +29,6 @@ const createCard = (data, profileId, handleOpenDelete, likeCallback, handleClick
   imageElement.addEventListener('click', () => handleClick(imageElement.src, imageElement.alt))
   return newCardElement;
 }
-
-const removeCard = async (buttonElementDelete, popupDelete, configTarget) => {
-  toggleButtonClass(buttonElementDelete, true, 'Удаление...')
-  const success = await apiMestoEndpoints.deleteCard(configTarget.currentCardId)
-  if (success) {
-    configTarget.currentCardElement.remove()
-    close(popupDelete)
-  }
-  else {
-    console.log('Не удалось удалить')
-  }
-  toggleButtonClass(buttonElementDelete, false, 'Удалить')
-};
 
 const likeCard = async (event, dataId, likeCountElement) => {
   if (event.target.classList.contains('card__like-button_is-active')) {
@@ -58,4 +43,4 @@ const likeCard = async (event, dataId, likeCountElement) => {
   }
 }
 
-export { createCard, removeCard, likeCard }
+export { createCard, likeCard }
